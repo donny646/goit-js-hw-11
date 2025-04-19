@@ -33,10 +33,25 @@ function handleSubmit(event) {
 
   getImagesByQuery(searchText)
     .then(imgData => {
-      clearGallery();
+      if (!imgData || imgData.length === 0) {
+        iziToast.warning({
+          title: 'No Results',
+          message: 'No images found for your search.',
+          position: 'topRight',
+        });
+        return;
+      }
 
+      clearGallery();
       createGallery(imgData);
     })
-    .catch(error => console.log(error))
-    .finally(hideLoader());
+    .catch(error => {
+      console.error(error);
+      iziToast.error({
+        title: 'Error',
+        message: 'An error occurred while fetching images.',
+        position: 'topRight',
+      });
+    })
+    .finally(() => hideLoader());
 }
